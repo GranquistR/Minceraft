@@ -16,6 +16,7 @@ namespace MyGameTest
         Graphics g;
         List<Vector3> world = new List<Vector3> { };
         Vector3 cursor = new Vector3(0, 0, 0);
+        Vector2 camera = new Vector2(0, 0);
 
         private void TimerCallback(object sender, EventArgs e)
         {
@@ -58,7 +59,7 @@ namespace MyGameTest
                 }
             }
 
-
+            //Draws the world
             foreach (var coord in world.Append(cursor).OrderBy(coor => coor.z).ThenBy(coor => coor.y).ThenBy(coor => coor.x).ToList())
             {
                 drawBox(coord);
@@ -77,55 +78,75 @@ namespace MyGameTest
 
             //left face
             //Top
-            g.FillPolygon(bLeft, new PointF[] { new PointF(screenX, screenY), new PointF(screenX - 43, screenY + 25), new PointF(screenX - 43, screenY - 25) });
+            g.FillPolygon(bLeft, new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX - 43 - camera.x, screenY + 25 - camera.y), new PointF(screenX - 43 - camera.x, screenY - 25 - camera.y) });
             //Bottom
-            g.FillPolygon(bLeft, new PointF[] { new PointF(screenX, screenY), new PointF(screenX - 43, screenY + 25), new PointF(screenX, screenY + 50) });
+            g.FillPolygon(bLeft, new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX - 43 - camera.x, screenY + 25 - camera.y), new PointF(screenX - camera.x, screenY + 50 - camera.y) });
 
             //right face
             //top
-            g.FillPolygon(bRight, new PointF[] { new PointF(screenX, screenY), new PointF(screenX + 43, screenY - 25), new PointF(screenX + 43, screenY + 25) });
+            g.FillPolygon(bRight, new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX + 43 - camera.x, screenY - 25 - camera.y), new PointF(screenX + 43 - camera.x, screenY + 25 - camera.y) });
             //bottom
-            g.FillPolygon(bRight, new PointF[] { new PointF(screenX, screenY), new PointF(screenX + 43, screenY + 25), new PointF(screenX, screenY + 50) });
+            g.FillPolygon(bRight, new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX + 43 - camera.x, screenY + 25 - camera.y), new PointF(screenX - camera.x, screenY + 50 - camera.y) });
 
             //top face
             //right
-            g.FillPolygon(bTop, new PointF[] { new PointF(screenX, screenY), new PointF(screenX, screenY - 50), new PointF(screenX + 43, screenY - 25) });
+            g.FillPolygon(bTop, new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX - camera.x, screenY - 50 - camera.y), new PointF(screenX + 43 - camera.x, screenY - 25 - camera.y) });
             //left
-            g.FillPolygon(bTop, new PointF[] { new PointF(screenX, screenY), new PointF(screenX, screenY - 50), new PointF(screenX - 43, screenY - 25) });
+            g.FillPolygon(bTop, new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX - camera.x, screenY - 50 - camera.y), new PointF(screenX - 43 - camera.x, screenY - 25 - camera.y) });
 
         }
 
         private void Game1_KeyDown(object sender, KeyEventArgs e)
         {
-            //w
+            //w forward
             if(e.KeyValue == 87)
             {
                 cursor.x -= 1;
             }
-            //s
+            //s backward
             else if (e.KeyValue == 83)
             {
                 cursor.x += 1;
             }
-            //a
+            //a left
             else if (e.KeyValue == 65)
             {
                 cursor.y -= 1;
             }
-            //d
+            //d right
             else if (e.KeyValue == 68)
             {
                 cursor.y += 1;
             }
-            //q
+            //q up
             else if (e.KeyValue == 81)
             {
                 cursor.z += 1;
             }
-            //e
+            //e down
             else if (e.KeyValue == 69)
             {
                 cursor.z -= 1;
+            }
+            //camera up
+            else if(e.KeyValue == 38)
+            {
+                camera.y = camera.y - 10;
+            }
+            //camera down
+            else if(e.KeyValue == 40)
+            {
+                camera.y = camera.y + 10;
+            }
+            //camera left
+            else if (e.KeyValue == 37)
+            {
+                camera.x = camera.x - 10;
+            }
+            //camera right
+            else if (e.KeyValue == 39)
+            {
+                camera.x = camera.x + 10;
             }
         }
     }
