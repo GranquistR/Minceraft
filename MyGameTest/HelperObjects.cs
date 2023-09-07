@@ -31,4 +31,27 @@ namespace MyGameTest
             this.y = y;
         }
     }
+
+    public class Cell
+    {
+        BlockTypes blockType { get; set; }
+        public Cell()
+        {
+            blockType = BlockTypes.air;
+        }
+
+        public Cell(BlockTypes blockType)
+        {
+            this.blockType = blockType;
+        }
+    }
+
+    public enum BlockTypes { 
+        air,
+        grass,
+        logs,
+        leaves,
+        stone,
+        brick
+    }
 }

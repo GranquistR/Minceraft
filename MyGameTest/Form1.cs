@@ -14,59 +14,69 @@ namespace MyGameTest
     public partial class Game1 : Form
     {
         Graphics g;
-        List<Vector3> world = new List<Vector3> { };
         Vector3 cursor = new Vector3(0, 0, 0);
         Vector2 camera = new Vector2(0, 0);
 
+        int worldSize = 8;
+        int worldHeight = 8;
+        Cell[][][] worldGrid;
+
         private void TimerCallback(object sender, EventArgs e)
         {
-            this.Invalidate();
+            //redraw the screen
+            Invalidate();
             return;
         }
         public Game1()
         {
+            worldGrid = new Cell[worldSize][][];
+            for (int i = 0; i < worldSize; i++)
+            {
+                worldGrid[i] = new Cell[worldSize][];
+                for (int j = 0; j < worldSize; j++)
+                {
+                    worldGrid[i][j] = new Cell[worldHeight];
+                    for(int k = 0; k < worldHeight; k++)
+                    {
+                        worldGrid[i][j][k] = new Cell(BlockTypes.stone);
+                    }
+                }
+
+            }
+
             var timer = new Timer();
             timer.Enabled = false;
-            timer.Interval = 100;  /* 100 millisec */
+            timer.Interval = 33;  /* 100 millisec */
             timer.Tick += new EventHandler(TimerCallback);
             timer.Start();
 
             InitializeComponent();
         }
 
+        //This is what runs each frame to draw the game
         private void Game1_Paint(object sender, PaintEventArgs e)
         {
             g = e.Graphics;
 
-            Brush b = new SolidBrush(Color.Red);
-
-
+            drawWorld();
             
+        }
 
-            world.Add(new Vector3(4, 10, 1));
-            world.Add(new Vector3(4, 11, 1));
-            world.Add(new Vector3(5, 10, 1));
-            world.Add(new Vector3(5, 11, 1));
-            world.Add(new Vector3(4, 10, 2));
-            world.Add(new Vector3(4, 11, 2));
-            world.Add(new Vector3(5, 10, 2));
-
-            for(int i = 0; i < 10; i++)
+        private void drawWorld()
+        {
+            for (int i = 0; i < worldSize; i++)
             {
-                for(int j = 5; j< 15; j++)
+                for (int j = 0; j < worldSize; j++)
                 {
-                    world.Add(new Vector3(i, j, 0));
+                    for (int k = 0; k < worldHeight; k++)
+                    {
+                        drawBox(new Vector3(i, j, k), worldGrid[i][j][k]);
+                    }
                 }
-            }
-
-            //Draws the world
-            foreach (var coord in world.Append(cursor).OrderBy(coor => coor.z).ThenBy(coor => coor.y).ThenBy(coor => coor.x).ToList())
-            {
-                drawBox(coord);
             }
         }
 
-        private void drawBox(Vector3 coord)
+        private void drawBox(Vector3 coord, Cell cell)
         {
             Pen p = new Pen(Color.White);
             Brush bTop = new SolidBrush(Color.LightGray);
@@ -131,22 +141,22 @@ namespace MyGameTest
             //camera up
             else if(e.KeyValue == 38)
             {
-                camera.y = camera.y - 10;
+                camera.y = camera.y - 3;
             }
             //camera down
             else if(e.KeyValue == 40)
             {
-                camera.y = camera.y + 10;
+                camera.y = camera.y + 3;
             }
             //camera left
             else if (e.KeyValue == 37)
             {
-                camera.x = camera.x - 10;
+                camera.x = camera.x - 3;
             }
             //camera right
             else if (e.KeyValue == 39)
             {
-                camera.x = camera.x + 10;
+                camera.x = camera.x + 3;
             }
         }
     }
