@@ -34,7 +34,7 @@ namespace MyGameTest
 
     public class Cell
     {
-        BlockTypes blockType { get; set; }
+        public BlockTypes blockType { get; set; }
         public Cell()
         {
             blockType = BlockTypes.air;

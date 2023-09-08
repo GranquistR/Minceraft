@@ -13,20 +13,33 @@ namespace MyGameTest
 {
     public partial class Game1 : Form
     {
+        //Graphics object
         Graphics g;
+        //Player cursor location
         Vector3 cursor = new Vector3(0, 0, 0);
+        //Camera offset
         Vector2 camera = new Vector2(0, 0);
+        int scrollSpeed = 10;
 
-        int worldSize = 8;
-        int worldHeight = 8;
+        int worldSize = 48;//48
+        int worldHeight = 16;//16
+
+        //Holds all the info of the game chunck/grid
         Cell[][][] worldGrid;
+        
+        int frame = 0;
 
+        //game times that clears the screen and redraws it
         private void TimerCallback(object sender, EventArgs e)
         {
+            //Just a makeshift frame rate counter. just dont go past 2 billion ;)
+            frame++;
             //redraw the screen
             Invalidate();
             return;
         }
+
+        //this runs before the programs starts
         public Game1()
         {
             worldGrid = new Cell[worldSize][][];
@@ -54,58 +67,74 @@ namespace MyGameTest
         }
 
         //This is what runs each frame to draw the game
+        //Main game loop
         private void Game1_Paint(object sender, PaintEventArgs e)
         {
             g = e.Graphics;
-
+            //Draws the world
             drawWorld();
-            
+            //Draws the frame rate
+            g.DrawString(frame.ToString(), new Font("Arial", 12), new SolidBrush(Color.Red), 5, 5);
         }
 
         private void drawWorld()
         {
-            for (int i = 0; i < worldSize; i++)
+            
+            for (int x = 0; x < worldSize; x++)
             {
-                for (int j = 0; j < worldSize; j++)
+                for (int y = 0; y < worldSize; y++)
                 {
-                    for (int k = 0; k < worldHeight; k++)
+                    for (int z = 0; z < worldHeight; z++)
                     {
-                        drawBox(new Vector3(i, j, k), worldGrid[i][j][k]);
+                        
+
+                        //Occlusion culling
+                        if(x + 1 < worldSize && y + 1 < worldSize && z + 1 < worldHeight)
+                        {
+                            //if the block in front is transparent then draw
+                            if(worldGrid[x+1][y+1][z+1].blockType == BlockTypes.air)
+                            {
+                                drawBlock(x, y, z);                               
+                            }
+                        }
+                        else
+                        {
+                            drawBlock(x, y, z);
+                        }
                     }
                 }
             }
+            
         }
 
-        private void drawBox(Vector3 coord, Cell cell)
+        //Draws an individual block at the given coordinates
+       private void drawBlock(int x, int y, int z)
         {
-            Pen p = new Pen(Color.White);
-            Brush bTop = new SolidBrush(Color.LightGray);
-            Brush bLeft = new SolidBrush(Color.DarkGray);
-            Brush bRight = new SolidBrush(Color.DimGray);
+            int screenX = y * 43 + -x * 43;
+            int screenY = y * 25 + -x * -25 + z * -50;
 
-            int screenX = coord.y * 43 + -coord.x * 43;
-            int screenY = coord.y * 25 + -coord.x * -25 + coord.z * -50;
+            //1 oclock face
+            g.FillPolygon(new SolidBrush(Color.LightGray), new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX - camera.x, screenY - 50 - camera.y), new PointF(screenX + 43 - camera.x, screenY - 25 - camera.y) });
 
-            //left face
-            //Top
-            g.FillPolygon(bLeft, new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX - 43 - camera.x, screenY + 25 - camera.y), new PointF(screenX - 43 - camera.x, screenY - 25 - camera.y) });
-            //Bottom
-            g.FillPolygon(bLeft, new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX - 43 - camera.x, screenY + 25 - camera.y), new PointF(screenX - camera.x, screenY + 50 - camera.y) });
+            //3 oclock face
+            g.FillPolygon(new SolidBrush(Color.Gray), new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX + 43 - camera.x, screenY - 25 - camera.y), new PointF(screenX + 43 - camera.x, screenY + 25 - camera.y) });
 
-            //right face
-            //top
-            g.FillPolygon(bRight, new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX + 43 - camera.x, screenY - 25 - camera.y), new PointF(screenX + 43 - camera.x, screenY + 25 - camera.y) });
-            //bottom
-            g.FillPolygon(bRight, new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX + 43 - camera.x, screenY + 25 - camera.y), new PointF(screenX - camera.x, screenY + 50 - camera.y) });
+            //5 oclock face
+            g.FillPolygon(new SolidBrush(Color.Gray), new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX + 43 - camera.x, screenY + 25 - camera.y), new PointF(screenX - camera.x, screenY + 50 - camera.y) });
 
-            //top face
-            //right
-            g.FillPolygon(bTop, new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX - camera.x, screenY - 50 - camera.y), new PointF(screenX + 43 - camera.x, screenY - 25 - camera.y) });
-            //left
-            g.FillPolygon(bTop, new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX - camera.x, screenY - 50 - camera.y), new PointF(screenX - 43 - camera.x, screenY - 25 - camera.y) });
+            //7 oclock face
+            g.FillPolygon(new SolidBrush(Color.DarkGray), new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX - 43 - camera.x, screenY + 25 - camera.y), new PointF(screenX - camera.x, screenY + 50 - camera.y) });
+
+            //9 oclock face
+            g.FillPolygon(new SolidBrush(Color.DarkGray), new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX - 43 - camera.x, screenY + 25 - camera.y), new PointF(screenX - 43 - camera.x, screenY - 25 - camera.y) });
+
+            //11 oclock face
+            g.FillPolygon(new SolidBrush(Color.LightGray), new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX - camera.x, screenY - 50 - camera.y), new PointF(screenX - 43 - camera.x, screenY - 25 - camera.y) });
 
         }
 
+        //input handler
+        //At a later date I will make this more robust and smoother
         private void Game1_KeyDown(object sender, KeyEventArgs e)
         {
             //w forward
@@ -141,22 +170,22 @@ namespace MyGameTest
             //camera up
             else if(e.KeyValue == 38)
             {
-                camera.y = camera.y - 3;
+                camera.y = camera.y - scrollSpeed;
             }
             //camera down
             else if(e.KeyValue == 40)
             {
-                camera.y = camera.y + 3;
+                camera.y = camera.y + scrollSpeed;
             }
             //camera left
             else if (e.KeyValue == 37)
             {
-                camera.x = camera.x - 3;
+                camera.x = camera.x - scrollSpeed;
             }
             //camera right
             else if (e.KeyValue == 39)
             {
-                camera.x = camera.x + 3;
+                camera.x = camera.x + scrollSpeed;
             }
         }
     }
