@@ -52,6 +52,7 @@ namespace MyGameTest
         logs,
         leaves,
         stone,
-        dirt
+        dirt,
+        cursor
     }
 }

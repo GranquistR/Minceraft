@@ -19,6 +19,10 @@ namespace MyGameTest
         //Graphics object
         Graphics g;
 
+        //world size
+        int worldSize = 8;//48
+        int worldHeight = 8;//16
+
         //Player cursor location
         Vector3 cursor = new Vector3(0, 0, 0);
 
@@ -26,15 +30,14 @@ namespace MyGameTest
         Vector2 camera = new Vector2(0, 0);
         int scrollSpeed = 10;
 
-        //world size
-        int worldSize = 8;//48
-        int worldHeight = 8;//16
 
         //Holds all the info of the game chunck/grid
         Cell[][][] worldGrid;
 
         //frame counter
         int frame = 0;
+
+        bool isDebugMode = false;
 
         //sprite sheet
         Bitmap bitmap = new Bitmap(Image.FromFile(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\Textures\tinyBlocks.png")));
@@ -89,6 +92,9 @@ namespace MyGameTest
             timer.Tick += new EventHandler(TimerCallback);
             timer.Start();
 
+            //sets cursor to default location
+            cursor = new Vector3(worldSize - 1, worldSize - 1, worldHeight - 1);
+
             InitializeComponent();
         }
 
@@ -104,8 +110,15 @@ namespace MyGameTest
             //Draws the world
             drawWorld();
 
-            //Draws the frame rate
-            g.DrawString(frame.ToString(), new Font("Arial", 12), new SolidBrush(Color.Red), 5, 5);
+            #region debug tools
+            if (isDebugMode)
+            {
+                //Draws the frame rate
+                g.DrawString(frame.ToString(), new Font("Arial", 12), new SolidBrush(Color.Red), 5, 5);
+                //draws the cursor location
+                g.DrawString($"Cursor Location: ({cursor.x},{cursor.y},{cursor.z})", new Font("Arial", 12), new SolidBrush(Color.Red), 5, 20);
+            }
+            #endregion
         }
 
         private void drawWorld()
@@ -124,13 +137,21 @@ namespace MyGameTest
                         {
                             //if the block in front is transparent then draw
                             if(worldGrid[x+1][y+1][z+1].blockType == BlockTypes.air)
-                            {
-                                drawBlock(x, y, z, worldGrid[x][y][z].blockType);                               
+                            {                              
+                                drawBlock(x, y, z, worldGrid[x][y][z].blockType);
+                                if (x == cursor.x && y == cursor.y && z == cursor.z)
+                                {
+                                    drawBlock(x, y, z, BlockTypes.cursor);
+                                }
                             }
                         }
                         else
                         {
                             drawBlock(x, y, z, worldGrid[x][y][z].blockType);
+                            if (x == cursor.x && y == cursor.y && z == cursor.z)
+                            {
+                                drawBlock(x, y, z, BlockTypes.cursor);
+                            }
                         }
                     }
                 }
@@ -143,24 +164,6 @@ namespace MyGameTest
         {
             int screenX = y * 43 + -x * 44;
             int screenY = y * 22 + -x * -22 + z * -50;
-
-            ////1 oclock face
-            //g.FillPolygon(new SolidBrush(Color.LightGray), new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX - camera.x, screenY - 50 - camera.y), new PointF(screenX + 43 - camera.x, screenY - 25 - camera.y) });
-
-            ////3 oclock face
-            //g.FillPolygon(new SolidBrush(Color.Gray), new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX + 43 - camera.x, screenY - 25 - camera.y), new PointF(screenX + 43 - camera.x, screenY + 25 - camera.y) });
-
-            ////5 oclock face
-            //g.FillPolygon(new SolidBrush(Color.Gray), new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX + 43 - camera.x, screenY + 25 - camera.y), new PointF(screenX - camera.x, screenY + 50 - camera.y) });
-
-            ////7 oclock face
-            //g.FillPolygon(new SolidBrush(Color.DarkGray), new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX - 43 - camera.x, screenY + 25 - camera.y), new PointF(screenX - camera.x, screenY + 50 - camera.y) });
-
-            ////9 oclock face
-            //g.FillPolygon(new SolidBrush(Color.DarkGray), new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX - 43 - camera.x, screenY + 25 - camera.y), new PointF(screenX - 43 - camera.x, screenY - 25 - camera.y) });
-
-            ////11 oclock face
-            //g.FillPolygon(new SolidBrush(Color.LightGray), new PointF[] { new PointF(screenX - camera.x, screenY - camera.y), new PointF(screenX - camera.x, screenY - 50 - camera.y), new PointF(screenX - 43 - camera.x, screenY - 25 - camera.y) });
 
             //find sprite offset
             int spriteX = 0;
@@ -190,6 +193,11 @@ namespace MyGameTest
                 spriteX = 6;
                 spriteY = 0;
             }
+            else if (type == BlockTypes.cursor)
+            {
+                spriteX = 8;
+                spriteY = 7;
+            }
             else if (type == BlockTypes.air)
             {
                 return;
@@ -210,32 +218,50 @@ namespace MyGameTest
             //w forward
             if(e.KeyValue == 87)
             {
-                cursor.x -= 1;
+                if (cursor.x > 0)
+                {
+                    cursor.x -= 1;
+                }
             }
             //s backward
             else if (e.KeyValue == 83)
             {
-                cursor.x += 1;
+                if (cursor.x < worldSize - 1)
+                {
+                    cursor.x += 1;
+                }
             }
             //a left
             else if (e.KeyValue == 65)
             {
-                cursor.y -= 1;
+                if (cursor.y > 0)
+                {
+                    cursor.y -= 1;
+                }
             }
             //d right
             else if (e.KeyValue == 68)
             {
-                cursor.y += 1;
+                if (cursor.y < worldSize - 1)
+                {
+                    cursor.y += 1;
+                }
             }
             //q up
             else if (e.KeyValue == 81)
             {
-                cursor.z += 1;
+                if (cursor.z < worldHeight - 1)
+                {
+                    cursor.z += 1;
+                }
             }
             //e down
             else if (e.KeyValue == 69)
             {
-                cursor.z -= 1;
+                if (cursor.z > 0)
+                {
+                    cursor.z -= 1;
+                }
             }
             //camera up
             else if(e.KeyValue == 38)
@@ -256,6 +282,11 @@ namespace MyGameTest
             else if (e.KeyValue == 39)
             {
                 camera.x = camera.x + scrollSpeed;
+            }
+            //enter debug mode
+            else if (e.KeyValue == 86)
+            {
+                isDebugMode = !isDebugMode;
             }
         }
     }
