@@ -21,7 +21,7 @@ namespace MyGameTest
 
         //world size
         int worldSize = 8;//48
-        int worldHeight = 8;//16
+        int worldHeight = 16;//16
 
         //Player cursor location
         Vector3 cursor = new Vector3(0, 0, 0);
@@ -215,8 +215,9 @@ namespace MyGameTest
         //At a later date I will make this more robust and smoother
         private void Game1_KeyDown(object sender, KeyEventArgs e)
         {
+            #region cursor control
             //w forward
-            if(e.KeyValue == 87)
+            if (e.KeyValue == 87)
             {
                 if (cursor.x > 0)
                 {
@@ -263,8 +264,14 @@ namespace MyGameTest
                     cursor.z -= 1;
                 }
             }
+            else if (e.KeyValue == 32)
+            {
+                worldGrid[cursor.x][cursor.y][cursor.z].blockType = BlockTypes.logs;
+            }
+            #endregion
+            #region camera control
             //camera up
-            else if(e.KeyValue == 38)
+            else if (e.KeyValue == 38)
             {
                 camera.y = camera.y - scrollSpeed;
             }
@@ -288,6 +295,7 @@ namespace MyGameTest
             {
                 isDebugMode = !isDebugMode;
             }
+            #endregion
         }
     }
 }
