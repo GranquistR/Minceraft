@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyGameTest", "MyGameTest\MyGameTest.csproj", "{6B63FD7E-EFF7-4D55-B75C-5877072C549C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyBlocks", "MyGameTest\TinyBlocks.csproj", "{6B63FD7E-EFF7-4D55-B75C-5877072C549C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
