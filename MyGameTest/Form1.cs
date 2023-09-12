@@ -39,8 +39,14 @@ namespace MyGameTest
 
         bool isDebugMode = false;
 
+        //Inventory
+        List<BlockTypes> inventory = new List<BlockTypes>();
+        int selectedInventory = 1;
+
         //sprite sheet
-        Bitmap bitmap = new Bitmap(Image.FromFile(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\Textures\tinyBlocks.png")));
+        Bitmap blockSpriteSheet = new Bitmap(Image.FromFile(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\Textures\tinyBlocks.png")));
+        Bitmap inventroySprite = new Bitmap(Image.FromFile(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\Textures\inventoryCell.png")));
+        Bitmap selectedInventroySprite = new Bitmap(Image.FromFile(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\Textures\inventoryCellSelected.png")));
 
         //game times that clears the screen and redraws it
         private void TimerCallback(object sender, EventArgs e)
@@ -95,6 +101,14 @@ namespace MyGameTest
             //sets cursor to default location
             cursor = new Vector3(worldSize - 1, worldSize - 1, worldHeight - 1);
 
+            //FIlls inventory with default blocks
+            inventory.Add(BlockTypes.stone);
+            inventory.Add(BlockTypes.dirt);
+            inventory.Add(BlockTypes.grass);
+            inventory.Add(BlockTypes.logs);
+            inventory.Add(BlockTypes.leaves);
+            inventory.Add(BlockTypes.air);
+
             InitializeComponent();
         }
 
@@ -107,8 +121,25 @@ namespace MyGameTest
             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
 
+
             //Draws the world
             drawWorld();
+
+            //Draws inventory
+            for(int i = 0; i < inventory.Count(); i++)
+            {
+                var spriteLoc = GetSpriteCoord(inventory[i]);
+                if (selectedInventory == i)
+                {
+                    g.DrawImage(selectedInventroySprite, new Rectangle(80 * i, 0, 80, 80));
+                    g.DrawImage(blockSpriteSheet, new Rectangle(80 * i + 15, 15, 50, 50), new Rectangle(1 + (18 * spriteLoc.x), (18 * spriteLoc.y), 16, 18), GraphicsUnit.Pixel);
+                }
+                else
+                {
+                    g.DrawImage(inventroySprite, new Rectangle(80 * i, 0, 80, 80));
+                    g.DrawImage(blockSpriteSheet, new Rectangle(80 * i + 15, 15, 50, 50), new Rectangle(1 + (18 * spriteLoc.x), (18 * spriteLoc.y), 16, 18), GraphicsUnit.Pixel);
+                }
+            }
 
             #region debug tools
             if (isDebugMode)
@@ -166,6 +197,13 @@ namespace MyGameTest
             int screenY = y * 22 + -x * -22 + z * -50;
 
             //find sprite offset
+            var spriteLoc = GetSpriteCoord(type);
+
+            g.DrawImage(blockSpriteSheet, new Rectangle(screenX - camera.x, screenY - camera.y,87,100), new Rectangle(1 + (18 * spriteLoc.x), (18 * spriteLoc.y), 16, 18), GraphicsUnit.Pixel);
+        }
+
+        private Vector2 GetSpriteCoord(BlockTypes type)
+        {
             int spriteX = 0;
             int spriteY = 0;
             if (type == BlockTypes.stone)
@@ -200,16 +238,16 @@ namespace MyGameTest
             }
             else if (type == BlockTypes.air)
             {
-                return;
+                spriteX = -1;
+                spriteY = -1;
             }
             else
             {
-                return;
+                spriteX = -1;
+                spriteY = -1;
             }
-            g.DrawImage(bitmap, new Rectangle(screenX - camera.x, screenY - camera.y,87,100), new Rectangle(1 + (18 * spriteX), (18 * spriteY), 16, 18), GraphicsUnit.Pixel);
+            return new Vector2(spriteX, spriteY);
         }
-
-      
 
         //input handler
         //At a later date I will make this more robust and smoother
@@ -266,7 +304,7 @@ namespace MyGameTest
             }
             else if (e.KeyValue == 32)
             {
-                worldGrid[cursor.x][cursor.y][cursor.z].blockType = BlockTypes.logs;
+                worldGrid[cursor.x][cursor.y][cursor.z].blockType = inventory[selectedInventory];
             }
             #endregion
             #region camera control
@@ -294,6 +332,22 @@ namespace MyGameTest
             else if (e.KeyValue == 86)
             {
                 isDebugMode = !isDebugMode;
+            }
+            #endregion
+            #region inventory control
+            else if (e.KeyValue == 188)
+            {
+                if (selectedInventory > 0)
+                {
+                    selectedInventory--;
+                }
+            }
+            else if (e.KeyValue == 190)
+            {
+                if(selectedInventory < inventory.Count - 1)
+                {
+                    selectedInventory++;
+                }
             }
             #endregion
         }

@@ -81,6 +81,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Textures\inventoryCellSelected.png" />
+    <Content Include="Textures\inventoryCell.png" />
     <Content Include="Textures\tinyBlocks.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
