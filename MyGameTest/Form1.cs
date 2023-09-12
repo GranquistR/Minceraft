@@ -107,6 +107,11 @@ namespace MyGameTest
             inventory.Add(BlockTypes.grass);
             inventory.Add(BlockTypes.logs);
             inventory.Add(BlockTypes.leaves);
+            inventory.Add(BlockTypes.planks);
+            inventory.Add(BlockTypes.bricks);
+            inventory.Add(BlockTypes.sand);
+            inventory.Add(BlockTypes.cobble);
+            inventory.Add(BlockTypes.mossyCobble);
             inventory.Add(BlockTypes.air);
 
             InitializeComponent();
@@ -235,6 +240,31 @@ namespace MyGameTest
             {
                 spriteX = 8;
                 spriteY = 7;
+            }
+            else if (type == BlockTypes.planks)
+            {
+                spriteX = 4;
+                spriteY = 3;
+            }
+            else if (type == BlockTypes.bricks)
+            {
+                spriteX = 2;
+                spriteY = 6;
+            }
+            else if (type == BlockTypes.sand)
+            {
+                spriteX = 4;
+                spriteY = 0;
+            }
+            else if (type == BlockTypes.cobble)
+            {
+                spriteX = 4;
+                spriteY = 6;
+            }
+            else if (type == BlockTypes.mossyCobble)
+            {
+                spriteX = 0;
+                spriteY = 8;
             }
             else if (type == BlockTypes.air)
             {

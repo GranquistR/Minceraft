@@ -84,6 +84,7 @@
     <Content Include="Textures\inventoryCellSelected.png" />
     <Content Include="Textures\inventoryCell.png" />
     <Content Include="Textures\tinyBlocks.png" />
+    <Content Include="Textures\tinyBlocksIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

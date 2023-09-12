@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Game1));
             this.SuspendLayout();
             // 
             // Game1
@@ -38,8 +39,9 @@
             this.ClientSize = new System.Drawing.Size(1006, 721);
             this.DoubleBuffered = true;
             this.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Game1";
-            this.Text = "Form1";
+            this.Text = "TinyBlocks";
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Game1_Paint);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Game1_KeyDown);
             this.ResumeLayout(false);

@@ -53,6 +53,11 @@ namespace MyGameTest
         leaves,
         stone,
         dirt,
-        cursor
+        cursor,
+        planks,
+        bricks,
+        sand,
+        cobble,
+        mossyCobble,
     }
 }
