@@ -1,5 +1,5 @@
-# Minceraft
-An isometric minecraft
+# TinyBlocks
+An isometric block building game
 
 Hello,
 
